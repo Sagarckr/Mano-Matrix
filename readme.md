@@ -1,20 +1,14 @@
-# installation
-Please copy and paste this command to run this project
+# Mano Matrix
 
-'''
-    in terminal
-    pip install -r requirements.txt
-'''
+# installation 
+ 
+To install all the dependencies, you can run:
 
-and run this
-'''
-    in terminal
-    python Mano Matrix.py
-'''
+### `pip install -r requirements.txt`
 
-to save all required packages
+# Run
 
-'''
-    terminal
-    pip freeze > requirements.txt
-'''
+TO run the program, you can use:
+
+### `python '.\Mano Matrix.py'`
+
