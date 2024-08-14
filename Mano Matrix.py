@@ -1,5 +1,5 @@
 ###################################################################################################################################################################
-#  @Author:- Sagar Sharma
+#  @Author:- Sagar Sharma, Shubham Ghimire
 #  @Title:- Basic Hand Recognition using Mediapipe 
 ###################################################################################################################################################################
 
@@ -13,7 +13,7 @@ from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from google.protobuf.json_format import MessageToDict
 import numpy as np
 import time
-import tensorflow as tf
+# import tensorflow as tf
 from pynput.keyboard import Key, Controller
 import subprocess
 
@@ -114,6 +114,8 @@ while True:
         if handList[16][1] < handList[14][1]: fingers[3] = True  # Ring finger is up
         if handList[20][1] < handList[18][1]: fingers[4] = True  # Pinky finger is up
         
+    
+        
 
         # Check if only index and middle fingers are open for zoom operations
         if fingers == [False, True, True, False, False]:
@@ -143,7 +145,7 @@ while True:
 
             # Display zoom level on the frame
             cv2.putText(img, f'Zoom Level: {int(length)}', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            cv2.putText(img, 'Peace', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 2)
+            cv2.putText(img, 'Peace', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 2)     
 
         else:
             zooming = False  # Reset zooming flag
