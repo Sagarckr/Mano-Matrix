@@ -158,6 +158,7 @@ while True:
                 cv2.putText(img, 'Rock On', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 255), 2)
             elif fingers == [True, True, True, True, True]:
                 cv2.putText(img, 'Hi', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
+                keyboard.press(Key.media_play_pause)  # Toggle play/pause
 
         """
         elif fingers == [False, False, True, False, False]:
