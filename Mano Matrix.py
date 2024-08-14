@@ -51,6 +51,8 @@ cooldown = 0  # Cooldown timer for gestures
 direction = "none"  # Direction of swipe gesture
 keyboard = Controller()  # Controller for keyboard inputs
 flag = 0  # Flag for swipe direction display
+zoom_cooldown = 0  # Initialize zoom cooldown
+zooming = False  # Flag to track zooming state
 
 while True:
     ret, img = cap.read()  # Capture frame from webcam
@@ -113,17 +115,49 @@ while True:
         if handList[20][1] < handList[18][1]: fingers[4] = True  # Pinky finger is up
         
 
-        # Implement gestures
+        # Check if only index and middle fingers are open for zoom operations
         if fingers == [False, True, True, False, False]:
+            zooming = True  # Set zooming flag
+            # Calculate the distance between the index and middle fingers
+            length = hypot(x3 - x2, y3 - y2)
+
+            # Define the range for zooming
+            zoom_in_threshold = 60  # Minimum distance for zoom in
+            zoom_out_threshold = 40  # Maximum distance for zoom out
+
+            # Slow zoom in
+            if length > zoom_in_threshold:
+                print("Zooming in")
+                keyboard.press(Key.ctrl)
+                keyboard.press('=')
+                keyboard.release('=')
+                keyboard.release(Key.ctrl)
+
+            # Slow zoom out
+            elif length < zoom_out_threshold:
+                print("Zooming out")
+                keyboard.press(Key.ctrl)
+                keyboard.press('-')
+                keyboard.release('-')
+                keyboard.release(Key.ctrl)
+
+            # Display zoom level on the frame
+            cv2.putText(img, f'Zoom Level: {int(length)}', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.putText(img, 'Peace', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 2)
-        elif fingers == [True, False, False, False, False]:
-            cv2.putText(img, 'Thumbs Up', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
-        elif fingers == [False, False, True, True, True]:
-            cv2.putText(img, 'OK', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 2)
-        elif fingers == [False, True, False, False, True]:
-            cv2.putText(img, 'Rock On', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 255), 2)
-        elif fingers == [True, True, True, True, True]:
-            cv2.putText(img, 'Hi', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
+
+        else:
+            zooming = False  # Reset zooming flag
+            # Handle other gestures
+            if fingers == [False, True, True, False, False]:
+                cv2.putText(img, 'Peace', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 2)
+            elif fingers == [True, False, False, False, False]:
+                cv2.putText(img, 'Thumbs Up', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
+            elif fingers == [False, False, True, True, True]:
+                cv2.putText(img, 'OK', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 2)
+            elif fingers == [False, True, False, False, True]:
+                cv2.putText(img, 'Rock On', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 255), 2)
+            elif fingers == [True, True, True, True, True]:
+                cv2.putText(img, 'Hi', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
 
         """
         elif fingers == [False, False, True, False, False]:
