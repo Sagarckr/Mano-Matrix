@@ -3,7 +3,7 @@ Please copy and paste this command to run this project
 
 '''
     in terminal
-    pip install -r requirement.txt
+    pip install -r requirements.txt
 '''
 
 and run this
