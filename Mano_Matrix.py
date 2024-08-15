@@ -95,7 +95,7 @@ while True:
                 lmList.append([id, cx, cy])  # Append landmark information to list
             mpDraw.draw_landmarks(img, handlandmark, mpHands.HAND_CONNECTIONS)  # Draw hand landmarks
             for point in handList:
-                cv2.circle(img, point, 5, (255, 255, 255), cv2.FILLED)  # Draw circles at landmark positions
+                cv2.circle(img, point, 5, (255, 255, 255), cv2.FILLED)  # Draw circles at landmark positions white color
 
     if lmList:
         # Get coordinates of various fingers
@@ -166,7 +166,7 @@ while True:
                # cv2.putText(img, 'Play/Pause', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 2)
                # keyboard.press(Key.media_play_pause)  # Toggle play/pause
 
-            # Initialize a variable to keep track of the current state
+             # Initialize a variable to keep track of the current state
                 video_playing = False  # Start with video paused
 
                 def toggle_play_pause():
