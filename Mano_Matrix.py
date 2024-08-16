@@ -1,5 +1,5 @@
 ###################################################################################################################################################################
-#  @Author:- Sagar Sharma, Shubham Ghimire
+#  @Author:- Sagar Sharma
 #  @Title:- Basic Hand Recognition using Mediapipe 
 ###################################################################################################################################################################
 
@@ -13,9 +13,10 @@ from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from google.protobuf.json_format import MessageToDict
 import numpy as np
 import time
-# import tensorflow as tf
+import tensorflow as tf
 from pynput.keyboard import Key, Controller
 import subprocess
+import pyautogui
 
 # Initialize webcam
 cap = cv2.VideoCapture(0)
@@ -59,6 +60,10 @@ while True:
     if not ret:
         break
 
+    # Adjust the window size to fit the resolution
+    cv2.namedWindow('Image', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Image', x, y)
+
     img = cv2.flip(img, 1)  # Flip the frame horizontally
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Convert frame to RGB
 
@@ -90,7 +95,7 @@ while True:
                 lmList.append([id, cx, cy])  # Append landmark information to list
             mpDraw.draw_landmarks(img, handlandmark, mpHands.HAND_CONNECTIONS)  # Draw hand landmarks
             for point in handList:
-                cv2.circle(img, point, 5, (255, 255, 255), cv2.FILLED)  # Draw circles at landmark positions
+                cv2.circle(img, point, 5, (255, 255, 255), cv2.FILLED)  # Draw circles at landmark positions white color
 
     if lmList:
         # Get coordinates of various fingers
@@ -113,8 +118,6 @@ while True:
         if handList[12][1] < handList[10][1]: fingers[2] = True  # Middle finger is up
         if handList[16][1] < handList[14][1]: fingers[3] = True  # Ring finger is up
         if handList[20][1] < handList[18][1]: fingers[4] = True  # Pinky finger is up
-        
-    
         
 
         # Check if only index and middle fingers are open for zoom operations
@@ -145,11 +148,10 @@ while True:
 
             # Display zoom level on the frame
             cv2.putText(img, f'Zoom Level: {int(length)}', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            cv2.putText(img, 'Peace', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 2)     
+            cv2.putText(img, 'Peace', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 2)
 
         else:
             zooming = False  # Reset zooming flag
-            is_playing = False  # Reset play/pause flag
             # Handle other gestures
             if fingers == [False, True, True, False, False]:
                 cv2.putText(img, 'Peace', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 2)
@@ -159,16 +161,61 @@ while True:
                 cv2.putText(img, 'OK', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 2)
             elif fingers == [False, True, False, False, True]:
                 cv2.putText(img, 'Rock On', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 255), 2)
-            elif fingers == [True, True, True, True, True]: 
+            elif fingers == [True, True, True, True, True]:
                 cv2.putText(img, 'Hi', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
-                if not is_playing:
-                        keyboard.press(Key.media_play_pause)  # Simulate play/pause media key press
-                        is_playing = True
-                    
-                elif is_playing:
-                        keyboard.press(Key.media_play_pause)  # Simulate play/pause media key press
-                        is_playing = False
+               # cv2.putText(img, 'Play/Pause', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 2)
+               # keyboard.press(Key.media_play_pause)  # Toggle play/pause
+
+             # Initialize a variable to keep track of the current state
+                video_playing = False  # Start with video paused
+
+                def toggle_play_pause():
+                    global video_playing
+                    if video_playing:
+                        # If video is playing, press play/pause to pause it
+                        keyboard.press(Key.media_play_pause)
+                        keyboard.release(Key.media_play_pause)
+                        video_playing = False
+                        cv2.putText(img, 'Pause Video', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 2)
+                    else:
+                        # If video is paused, press play/pause to play it
+                        keyboard.press(Key.media_play_pause)
+                        keyboard.release(Key.media_play_pause)
+                        video_playing = True
+                        cv2.putText(img, 'Play Video', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 2)
+
+                # Adjust detection thresholds and add a delay
+                # time.sleep(2)  # Adjust the delay based on your needs
+
+                # Check if all fingers are up
+                if fingers == [True, True, True, True, True]:
+                    toggle_play_pause()  # Toggle play/pause when all fingers are up
+
+                # Check if all fingers are down
+                elif fingers == [False, False, False, False, False]:
+                    if video_playing:
+                        toggle_play_pause()  # Ensure to pause if video is currently playing
+
+                # keyboard.press(Key.space)  # Toggle play/pause on YouTube
+                # keyboard.release(Key.space)
+
+                # pyautogui.press('space')  # Play/Pause YouTube video
                 
+            elif fingers == [False, False, False, False, True]:
+                cv2.putText(img, 'Next Video', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 2)
+                # Play next video
+                keyboard.press(Key.shift)
+                keyboard.press('n')
+                keyboard.release('n')
+                keyboard.release(Key.shift)  # Play next video on YouTube
+                
+            elif fingers == [False, False, False, True, True]:
+                cv2.putText(img, 'Prev Video', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 2)
+                # Play previous video
+                keyboard.press(Key.shift)
+                keyboard.press('p')
+                keyboard.release('p')
+                keyboard.release(Key.shift)  # Play previous video on YouTube
 
         """
         elif fingers == [False, False, True, False, False]:
@@ -197,6 +244,12 @@ while True:
             direction = "none"
             flag = 4
 
+            # rewinding video
+            keyboard.press(Key.shift)
+            keyboard.press('j')
+            keyboard.release('j')
+            keyboard.release(Key.shift)
+
         # Check if swipe left gesture is detected
         if (x3 < 400 or x4 < 400 or x5 < 400) and timer < 1.5 and direction == "left":
             print("Swiped left")
@@ -206,6 +259,12 @@ while True:
             cooldown = 5
             direction = "none"
             flag = 2
+
+            # forwarding video
+            keyboard.press(Key.shift)
+            keyboard.press('l')
+            keyboard.release('l')
+            keyboard.release(Key.shift)
 
         # Handle hand classification
         if len(results.multi_handedness) != 2:
