@@ -149,6 +149,7 @@ while True:
 
         else:
             zooming = False  # Reset zooming flag
+            is_playing = False  # Reset play/pause flag
             # Handle other gestures
             if fingers == [False, True, True, False, False]:
                 cv2.putText(img, 'Peace', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 2)
@@ -158,9 +159,16 @@ while True:
                 cv2.putText(img, 'OK', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 2)
             elif fingers == [False, True, False, False, True]:
                 cv2.putText(img, 'Rock On', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 255), 2)
-            elif fingers == [True, True, True, True, True]:
+            elif fingers == [True, True, True, True, True]: 
                 cv2.putText(img, 'Hi', (540, 140), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
-                keyboard.press(Key.media_play_pause)  # Toggle play/pause
+                if not is_playing:
+                        keyboard.press(Key.media_play_pause)  # Simulate play/pause media key press
+                        is_playing = True
+                    
+                elif is_playing:
+                        keyboard.press(Key.media_play_pause)  # Simulate play/pause media key press
+                        is_playing = False
+                
 
         """
         elif fingers == [False, False, True, False, False]:
