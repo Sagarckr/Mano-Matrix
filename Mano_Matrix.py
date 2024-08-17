@@ -61,8 +61,8 @@ while True:
         break
 
     # Adjust the window size to fit the resolution
-    cv2.namedWindow('Image', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Image', x, y)
+    #cv2.namedWindow('Image', cv2.WINDOW_NORMAL)
+    #cv2.resizeWindow('Image', x, y)
 
     img = cv2.flip(img, 1)  # Flip the frame horizontally
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Convert frame to RGB
@@ -114,11 +114,25 @@ while True:
         # Detect specific gestures
         fingers = [False] * 5
         if handList[4][0] < handList[3][0]: fingers[0] = True  # Thumb is up
-        if handList[8][1] < handList[6][1]: fingers[1] = True  # Index finger is up
+        if handList[8][1] < handList[6][1]: fingers[1] = True  # Index finger is upNP
         if handList[12][1] < handList[10][1]: fingers[2] = True  # Middle finger is up
         if handList[16][1] < handList[14][1]: fingers[3] = True  # Ring finger is up
         if handList[20][1] < handList[18][1]: fingers[4] = True  # Pinky finger is up
-        
+
+        # Scrolling functionality
+        # Scroll up with the index finger
+        if fingers == [False, True, False, False, False]:
+            if y2 < y1 - 10:  # Index finger moved up
+                print("Scrolling up")
+                pyautogui.scroll(500)  # Scroll up
+                cv2.putText(img, 'Scroll Up', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
+
+        # Scroll down with the thumb finger
+        elif fingers == [True, False, False, False, False]:
+            if y2 > y1 + 10:  # Thumb finger moved down
+                print("Scrolling down")
+                pyautogui.scroll(-500)  # Scroll down
+                cv2.putText(img, 'Scroll Down', (980, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
 
         # Check if only index and middle fingers are open for zoom operations
         if fingers == [False, True, True, False, False]:
