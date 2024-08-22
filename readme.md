@@ -6,7 +6,7 @@ To install all the dependencies, first make an file named "requirements.txt" The
 
 ### `pip install -r requirements.txt`
 
-### `pip freeze < requirements.txt`
+### `pip freeze > requirements.txt`
 
 # Run
 
